@@ -7,7 +7,7 @@ def load_and_check():
     # Step 1: Check the loaded data
     
     # Correct the string to a number
-    if data.shape[1] != "17":
+    if data.shape[1] != 17:
         print("Please check that the data was loaded properly, different shape was expected.")
     else:
         print("Data loaded succesfully.")
@@ -24,9 +24,15 @@ def load_and_check():
     data['Condition_2'] = round(data['Quantity'] * data['Unit price'] + data['Tax'], 1) == round(data['Total'], 1)
     
     # Do any necessary changes below this comment and before the if statement
-    # You can change the if statement if you find it necessary
     
-    if (data['Condition_1'].sum() != data.shape[0])&(data['Condition_2'].sum() != data.shape[0]):
+    # Create a new column for calculated tax
+    data['Tax_calculated'] = data['Total'] - data['Quantity'] * data['Unit price']
+    
+    # Create a new condition for the integrity check
+    data['Condition_3'] = round(data['Tax_calculated'], 1) == round(data['Quantity'] * data['Unit price'] * 0.05, 1)
+    
+    # Add the new condition to the if statement using logic operators
+    if (data['Condition_1'].sum() != data.shape[0])&((data['Condition_2'].sum() != data.shape[0])|(data['Condition_3'].sum() != data.shape[0])):
         print("Something fishy is going on with the data! Better check the pipeline!")
     else: 
         print("Data integrity check was succesful!")
