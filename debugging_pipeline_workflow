@@ -1,5 +1,8 @@
+#start by loading all required for work libraries:
 import pandas as pd
 import numpy as np
+
+#check whether data loaded correctly from .csv file:
 def load_and_check():
     url = "https://drive.google.com/uc?id=1gf3l8scZG2roG41qTau4_p5UEwUPHM6I&export=download"
     data = pd.read_csv(url)
@@ -7,16 +10,32 @@ def load_and_check():
       print('Please check if data was loaded properly, different shape was expected.')
     else:
       print('Data was loaded properly.')
+
+    # use SQL logic and introduce such statistical concepts as mean(arithmetic average value or simple average) and standard deviation(std) to check whether sales data correct:
     grouped_data = data.groupby(['Date'])['Total'].agg(['mean', 'std'])
+
+    # triple standard deviation is used to check whether data distributed normally:
     grouped_data['threshold'] = 3 * grouped_data['std']
+
+    # to do this, introduce new columns(max and min), based on mean and std:
     grouped_data['max'] = grouped_data['mean']+grouped_data['threshold']
     grouped_data['min'] = grouped_data[['mean','threshold']].apply(lambda row:max(0, row['mean']-row['threshold']), axis = 1)
+
+    # merge newly created columns with the old ones, using SQL logic:
     data = pd.merge(data, grouped_data, on = 'Date', how = 'left')
+
+    # introduce new "Tax_calculated" column, calculated manually, as original "Tax" column one had "0" values, which possibly affected correctness of "Total" values:
     data['Tax_calculated'] = data['Unit price'] * data['Quantity'] * 0.05
+
+    # the data is supposed to be less than max(mean+3*std) and more than min(mean-3*std), in order to satisfy normal distribution condition:
     data['Condition_1'] = (data['Total'] >= data['min']) & (data['Total'] <= data['max'])
     data['Condition_1'].fillna(False, inplace = True)
+
+    # one more integrity check, to ensure data in the columns logically correct:
     data['Condition_2'] = data['Tax'] + data['Unit price'] * data['Quantity'] == data['Total']
     data['Condition_3'] = data['Total'] - data['Unit price'] * data['Quantity'] == data['Tax_calculated']
+
+    # in order to provide robust data integrity check, all 3 conditions should be satisfied:
     if data['Condition_1'].all() and data['Condition_2'].all() and data['Condition_3'].all():
       print('Data loaded successfully.The pipeline is belissimo.')
     else:
