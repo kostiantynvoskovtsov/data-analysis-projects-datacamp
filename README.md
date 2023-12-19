@@ -1,4 +1,3 @@
-Create debugging_pipeline V.2
 I did this project in 2 phases.
 Phase 1: Do what Datacamp required, e.g. find mistakes in the data pipeline. I used proposed "Run->Isolate->Rectify" strategy.
 1.1 I checked data shape(the amount of columns after loading had to correspond the amount of cloumns in the original .csv file).
