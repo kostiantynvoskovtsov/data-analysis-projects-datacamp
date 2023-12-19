@@ -1,4 +1,5 @@
 I did this project in 2 phases.
+
 Phase 1: Do what Datacamp required, e.g. find mistakes in the data pipeline. I used proposed "Run->Isolate->Rectify" strategy.
 1.1 I checked data shape(the amount of columns after loading had to correspond the amount of cloumns in the original .csv file).
 1.2 Next step was to check data integrity, using statistical concepts, like normal distribution(mean and std neded for that matter). I added one more column, "Tax_calculated", so to make sure it is there and correct(original "Tax" column contained "0" values, and because of that there were mistakes in "Total" column.)
